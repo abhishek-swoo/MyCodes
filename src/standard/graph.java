@@ -38,6 +38,7 @@ class graph
         }
     }
     
+    
     static final class WeightedAdjListGraph 
     {
 	int m, V, E;
@@ -69,7 +70,7 @@ class graph
         public int[][] dijkstra(final int s) {
             final int[] dist = new int[head.length];
             final int[] prev = new int[head.length];
-            final PriorityQueue<int[]> q = new PriorityQueue<int[]>(10, new Comparator<int[]>() {
+            final PriorityQueue<int[]> q = new PriorityQueue<>(10, new Comparator<int[]>() {
                 @Override
                 public int compare(int[] o1, int[] o2) {
                     return o1[0] - o2[0];

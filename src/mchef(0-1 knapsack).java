@@ -15,7 +15,7 @@ class mchef
     public static void main(String[] args) throws IOException
     {
         BufferedReader obj=new BufferedReader(new InputStreamReader(System.in));
-        PrintWriter out=new PrintWriter(System.out);
+        PrintWriter out=new PrintWriter("D:\\ppp.txt");
         int t=Integer.parseInt(obj.readLine());
         for(int te=0;te<t;te++)
         {
