@@ -657,4 +657,336 @@ public int maxProduct(int[] nums) {
 
 //  End of maximum product subarray
 
+//    unique paths II: No. of unique paths with obstacles in grid, obstacles is 1 in grid[i][j]
+
+    int dp[][];
+    int uniquePaths(int[][] grid, int i, int j) {
+        if(i >= grid.length || j >= grid[i].length || grid[i][j] == 1) {
+            return 0;
+        }
+
+        if(dp[i][j] != -1) return dp[i][j];
+
+        if(i == grid.length - 1 && j == grid[i].length - 1) {
+            return 1;
+        }
+
+        int way = 0;
+
+        if(i < grid.length) {
+            way += uniquePaths(grid, i + 1, j);
+        }
+
+        if(j < grid[i].length) {
+            way += uniquePaths(grid, i, j + 1);
+        }
+
+        dp[i][j] = way;
+        return way;
+    }
+
+//End of unique paths II
+
+//    Unique path III: grid is filled with 0, 1, -1, 2. Return the number of 4-directional walks from the starting square
+//    to the ending square, that walk over every non-obstacle square exactly once
+int dx[] = {-1, 0, 1,0};
+    int dy[] = {0, 1, 0, -1};
+
+    int uniquePaths(int[][] grid, int i, int j, int empty) {
+
+        if(i < 0 || j < 0 || i >= grid.length || j >= grid[i].length || grid[i][j] == -1) {
+            return 0;
+        }
+
+        if(grid[i][j] == 2) {
+            if(empty == -1) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        int ways = 0;
+        grid[i][j] = -1;
+        for(int ai = 0; ai < 4; ai++) {
+            int ni = i + dx[ai];
+            int nj = j + dy[ai];
+            ways += uniquePaths(grid, ni, nj, empty -1);
+        }
+        grid[i][j] = 0;
+
+        return ways;
+    }
+
+//    End of unique path III
+
+// Knight Dialer: Each time it lands on a key (including the initial placement of the knight), it presses the number of
+// that key, pressing N digits total.How many distinct numbers can you dial in this manner?
+
+    public int knightDialer(int N) {
+        grid = new boolean[4][3];
+        grid[3][0] = true;
+        grid[3][2] = true;
+
+        dpp = new int[4][3][N];
+
+        for(int i = 0; i < 4; i++) {
+            for(int j = 0; j < 3; j++) {
+                Arrays.fill(dpp[i][j], -1);
+            }
+        }
+
+        int ans = 0;
+        for(int i = 0; i< 4; i++) {
+            for(int j = 0; j < 3; j++) {
+                if(!grid[i][j]) {
+                    ans = (ans + findMoves(i,j,N-1)) % 1000000007;
+                }
+            }
+        }
+
+        return ans;
+
+    }
+
+    int dxx[] = {-1, 1, 2, 2, 1, -1, -2, -2};
+    int dyy[] = {2, 2, 1, -1, -2, -2, -1, 1};
+
+    int dpp[][][];
+
+    boolean grid[][];
+
+    int findMoves(int i, int j, int count) {
+
+        if(count == 0) {
+            return 1;
+        }
+        if(dpp[i][j][count] != -1) return dpp[i][j][count];
+        int ans = 0;
+        for(int di = 0; di < 8; di++) {
+            int x = i + dxx[di];
+            int y = j + dyy[di];
+
+            if(isValid(x, y) && !grid[x][y]) {
+                ans = (ans + findMoves(x, y, count - 1))% 1000000007;
+            }
+        }
+        dpp[i][j][count] = ans% 1000000007;
+        return ans% 1000000007;
+    }
+
+    boolean isValid(int i, int j) {
+        if(i > 3 || i<0 || j > 2 || j < 0) {
+            return false;
+        }
+        return true;
+    }
+// end of knight dialer
+
+//    Gas station: You have a car with an unlimited gas tank and it costs cost[i] of gas to travel from station i to its
+//    next station (i+1). You begin the journey with an empty tank at one of the gas stations.
+
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+
+        int diff = 0;
+        int amount = 0;
+        int index = 0;
+
+        for(int i = 0; i < gas.length; i++) {
+            amount += gas[i] - cost[i];
+            if(amount < 0) {
+                diff += amount;
+                amount = 0;
+                index = i+1;
+            }
+        }
+
+        if(amount + diff >= 0) {
+            return index;
+        }
+        return -1;
+    }
+
+//    end of gas station
+
+//    divide chocolate: You want to share the chocolate with your K friends so you start cutting the chocolate bar into K+1 pieces
+//using K cuts, each piece consists of some consecutive chunks.
+
+    public int maximizeSweetness(int[] nums, int m) {
+        m++;
+        long l = Integer.MAX_VALUE, r = 0;
+        for(int n : nums) {
+            r += n;
+            l = Math.min(l, n);
+        }
+        while(l+1 < r) {
+            long mid = l + (r-l) / 2;
+            if(canSplit(nums, m, mid)) {
+                l = mid;
+            } else {
+                r = mid - 1;
+            }
+        }
+        if(canSplit(nums, m, r)) return (int)r;
+        else return (int)l;
+    }
+    public boolean canSplit(int[] nums, int m, long target) {
+        long sum = 0, cnt = 0;
+        for(int n : nums) {
+            if(sum + n >= target) {
+                sum = 0;
+                cnt++;
+            } else {
+                sum += n;
+            }
+        }
+        return cnt >= m;
+    }
+
+//    end of divide chocolate
+
+//    Count K size increasing subsequence (recursion)
+
+    static int getKSizeSubSequence(int[] arr, int i, int prev, int count, int k) {
+        if(i == arr.length && count != k) {
+            return 0;
+        }
+
+        if(count == k) return 1;
+
+        if(prev < arr[i]) {
+            return getKSizeSubSequence(arr, i + 1, i, count + 1, k) +
+                    getKSizeSubSequence(arr, i + 1, prev, count, k);
+        }
+        return getKSizeSubSequence(arr, i + 1, prev, count, k);
+    }
+
+// end of Count K size increasing subsequence
+
+//    check a number is fibonacci or not: A number is Fibonacci if and only if one or both of (5*n2 + 4) or (5*n2 – 4) is a perfect square
+
+//    Find the maximum number of subarrays whose sum equals to k
+
+    public int subarraySum(int[] nums, int k) {
+        int count = 0;
+        int[] sum = new int[nums.length + 1];
+        sum[0] = 0;
+        for (int i = 1; i <= nums.length; i++)
+            sum[i] = sum[i - 1] + nums[i - 1];
+        for (int start = 0; start < nums.length; start++) {
+            for (int end = start + 1; end <= nums.length; end++) {
+                if (sum[end] - sum[start] == k)
+                    count++;
+            }
+        }
+        return count;
+    }
+
+//    End of maximum number of subarrays whose sum equals to k
+
+//    Follow up question: Find the maximum number of non-overlapping subarrays whose sum equals to k
+    public int subarray_sum(int[] nums, int k) {
+        Map<Integer, Integer> counts = new HashMap<>(nums.length);
+        counts.put(0, -1);
+        int ans = 0;
+        for (int i = 0, cum_sum = 0, last = -1; i < nums.length; ++i) {
+            cum_sum += nums[i];
+            if (counts.containsKey(cum_sum - k) && counts.get(cum_sum - k) + 1 > last) {
+                ++ans; last = i;
+            }
+            counts.put(cum_sum, i);
+        }
+        return ans;
+    }
+//    end
+
+//    generate is supposed to return a random number between 0 to n, but it is not supposed to return a number that it
+//    has already returned. If possiblities are exhauted, return -1.
+
+    static class RandomGenerator {
+
+        int[] arr;
+        Random rand;
+        int cur = 0;
+
+        public RandomGenerator(int n) {
+            arr = new int[n];
+            rand = new Random();
+            for(int i=0;i<arr.length;i++) {
+                arr[i] = i;
+                int next = rand.nextInt(i+1);
+                if(next != i) {
+                    int tmp = arr[i];
+                    arr[i] = arr[next];
+                    arr[next] = tmp;
+                }
+            }
+        }
+
+        public int generate() {
+            if(cur < arr.length)
+                return arr[cur++];
+            return -1;
+        }
+    }
+//    end of random class
+
+//    https://leetcode.com/discuss/interview-question/480256/Google-or-Onsite-or-Find-assignment-of-bread-slice
+//    bread slice find index of bread slice assigned to whom
+
+    static class Tuple {
+        char first;
+        char second;
+        Tuple(char f, char s) {
+            this.first = f;
+            this.second = s;
+        }
+    }
+    public static void main(String[] args) {
+        List<Tuple> list = new ArrayList<>();
+        list.add(new Tuple('A','C'));
+        list.add(new Tuple('C', 'B'));
+        list.add(new Tuple('A','D'));
+
+        assignBread(list, 4);
+    }
+
+
+    public static void assignBread(List<Tuple> list, int numPeople) {
+
+        HashMap<Character, int []> map = new HashMap<>();
+        int [] bread = new int[numPeople];
+
+        for (int i = 0; i < bread.length; i++) {
+            bread[i] = i;
+        }
+        map.put('A', bread);
+
+        int [] curBread;
+        for (Tuple currTuple : list) {
+
+            if(map.containsKey(currTuple.first)) {
+                curBread = map.get(currTuple.first);
+                int [] leftHalf = new int [curBread.length/2];
+                int [] rightHalf = new int [curBread.length/2];
+
+                for (int i = 0; i < leftHalf.length; i++) {
+                    leftHalf[i] = curBread[i];
+                }
+                for (int i = 0; i < rightHalf.length; i++) {
+                    rightHalf[i] = curBread[curBread.length/2 + i];
+                }
+                map.put(currTuple.first, rightHalf);
+                map.put(currTuple.second, leftHalf);
+            }
+        }
+
+        for (Character key : map.keySet()) {
+            for (int val : map.get(key)) {
+                System.out.println("Person " + key + " has bread: " + val);
+            }
+        }
+    }
+
+// end of bread slice problem
 }
