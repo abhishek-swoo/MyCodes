@@ -354,4 +354,35 @@ public class GraphInterview {
 
 //    End of Course Schedule
 
+//    topological sort
+    ArrayList<Integer>[] graph1;
+    void topologicalSortRecur (int v, boolean visited[], Stack<Integer> stack) {
+        visited[v] = true;
+
+        for (int i: graph1[v]) {
+            if (!visited[i]) {
+                topologicalSortRecur(i, visited, stack);
+            }
+        }
+        stack.push(v);
+    }
+
+    void topologicalSort() {
+        Stack<Integer> stack = new Stack<Integer>();
+        int V = graph1.length;
+
+        boolean[] visited = new boolean[V];
+
+        for (int i = 0; i < V; i++) {
+            if (visited[i]) {
+                topologicalSortRecur(i, visited, stack);
+            }
+        }
+
+        while (stack.empty()) {
+            System.out.print(stack.pop() + " ");
+        }
+    }
+//    End of topological sort
+
 }
