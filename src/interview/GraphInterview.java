@@ -385,4 +385,59 @@ public class GraphInterview {
     }
 //    End of topological sort
 
+//    Dijkstra code
+
+    public static class Node2 implements Comparable<Node2> {
+        int x;
+        long dist;
+
+        public Node2(int x, long dist) {
+            this.x = x;
+            this.dist = dist;
+        }
+
+        @Override
+        public int compareTo(Node2 o) {
+            if (this.x > o.x) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+    }
+    long dis[];
+    long inf = Long.MAX_VALUE / 2;
+
+    public int[] dijkstra(int s, ArrayList<Integer>[] graph, ArrayList<Integer>[] weight) {
+        int n = graph.length;
+        boolean visit[] = new boolean[n];
+        int parent[] = new int[n];
+        Arrays.fill(dis, inf);
+        Arrays.fill(parent, -1);
+
+        dis[s] = 0;
+        PriorityQueue<Node2> q = new PriorityQueue<>();
+        q.add(new Node2(s, 0));
+
+        while (!q.isEmpty()) {
+            Node2 now = q.poll();
+            int u = now.x;
+            if(!visit[u]) {
+                visit[u] = true;
+                for (int i = 0; i < graph[u].size(); i++) {
+                    int curr = graph[u].get(i);
+                    int w = weight[u].get(i);
+                    if (dis[u] + w < dis[curr]) {
+                        dis[curr] = dis[u] + w;
+                        parent[curr] = u;
+                        q.add(new Node2(curr, dis[curr]));
+                    }
+                }
+            }
+        }
+        return parent;
+    }
+
+//    end of dikstra ode
+
 }
