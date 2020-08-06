@@ -756,5 +756,45 @@ public int maxProduct(int[] nums) {
 
 //    end of kmp code
 
+//    Max Histogram area
+
+    static int maxHist(int R, int C, int row[]) {
+        Stack<Integer> result = new Stack<Integer>();
+
+        int top_val;
+
+        int max_area = 0; // Initialize max area in current
+
+        int area = 0; // Initialize area with current top
+
+        int i = 0;
+        while (i < C) {
+            if (result.empty() || row[result.peek()] <= row[i])
+                result.push(i++);
+
+            else {
+                top_val = row[result.peek()];
+                result.pop();
+                area = top_val * i;
+
+                if (!result.empty())
+                    area = top_val * (i - result.peek() - 1);
+                max_area = Math.max(area, max_area);
+            }
+        }
+
+        while (!result.empty()) {
+            top_val = row[result.peek()];
+            result.pop();
+            area = top_val * i;
+            if (!result.empty())
+                area = top_val * (i - result.peek() - 1);
+
+            max_area = Math.max(area, max_area);
+        }
+        return max_area;
+    }
+
+//    Max area histogram end
 
 }
